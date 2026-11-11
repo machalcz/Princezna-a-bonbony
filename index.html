@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Princezna a bonbony</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-title" content="Princezna">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="rotate"><div><div class="ph">📱</div><p>Otoč zařízení na šířku</p></div></div>
+
+<div id="msg"></div>
+
+<button id="bMute" class="tb" title="Zvuk (M)">🔊</button>
+<button id="bNew" class="tb" title="Nový level (N)">🎲</button>
+
+<div id="touch">
+  <div id="dpad"><span class="a l">◀</span><span class="a r">▶</span></div>
+  <button id="bDown" class="tb">▼</button>
+  <button id="bUp" class="tb">▲</button>
+  <button id="bJump" class="tb big">SKOK</button>
+  <button id="bPause" class="tb small">❚❚</button>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/input.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/themes.js"></script>
+<script src="js/env.js"></script>
+<script src="js/level.js"></script>
+<script src="js/player.js"></script>
+<script src="js/gen.js"></script>
+<script src="js/events.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

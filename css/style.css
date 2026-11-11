@@ -1,0 +1,80 @@
+html, body { margin: 0; height: 100%; background: #0b1020; overflow: hidden; overscroll-behavior: none;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+body { display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; }
+canvas { display: block; background: #000; image-rendering: auto; }
+
+#msg { position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(25,35,70,.35), rgba(10,14,35,.78)); color: #4a2a12; text-align: center; padding: 16px; z-index: 5;
+  font-family: Georgia, "Times New Roman", serif; }
+.card { position: relative; width: min(640px, 92vw); box-sizing: border-box; padding: 64px 52px 78px;
+  border-style: solid; border-width: 52px; border-image: url(../assets/ui/panel_small.webp) 82 fill / 52px stretch;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.45)); }
+.card .rib { position: absolute; left: 50%; top: -62px; transform: translateX(-50%); width: 430px; height: 120px; background-size: 100% 100%; background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center; }
+.card .rib span { color: #fff; font-weight: 700; font-size: 25px; letter-spacing: .5px; margin-top: -8px; text-shadow: 0 2px 0 #b23a78, 0 0 8px rgba(255,255,255,.35); max-width: 300px; line-height: 1.05; }
+.card .crown { position: absolute; left: 50%; top: -118px; width: 74px; transform: translateX(-50%); filter: drop-shadow(0 3px 4px rgba(0,0,0,.4)); }
+.card .body p { font-size: 20px; margin: 8px 0; line-height: 1.3; }
+.card .body .hint { font-size: 15px; line-height: 1.55; color: #6b4426; }
+.card .body b { color: #a02f6a; }
+.card .stars { display: flex; justify-content: center; gap: 8px; margin: 2px 0 6px; }
+.card .star { width: 66px; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+.card .star:nth-child(2) { transform: translateY(-10px) scale(1.12); }
+.card .play { position: absolute; left: 50%; bottom: -36px; transform: translateX(-50%); width: 270px; height: 90px; background-size: 100% 100%; background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; animation: pulse 1.6s ease-in-out infinite; }
+.card .play span { color: #fff; font-weight: 700; font-size: 26px; letter-spacing: 1px; text-shadow: 0 2px 0 #b23a78, 0 0 6px rgba(255,255,255,.4); }
+@keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.045); } }
+@media (max-height: 500px) { .card { padding: 40px 40px 60px; } .card .body p { font-size: 16px; margin: 4px 0; } .card .body .hint { font-size: 12.5px; line-height: 1.4; } .card .rib span { font-size: 21px; } .card .star { width: 48px; } }
+
+/* Dotykové prvky se zobrazí až po prvním dotyku (třída has-touch), nebo na dotykových zařízeních bez klávesnice */
+#touch { position: fixed; inset: 0; pointer-events: none; z-index: 4; display: none; }
+body.has-touch #touch { display: block; }
+#touch > * { pointer-events: auto; }
+
+#dpad { position: absolute; left: max(24px, env(safe-area-inset-left)); bottom: max(24px, env(safe-area-inset-bottom));
+  width: 250px; height: 120px; border-radius: 60px; background: rgba(40,20,50,.22); border: 3px solid rgba(255,214,120,.75); box-shadow: inset 0 0 18px rgba(255,255,255,.12);
+  display: flex; justify-content: space-between; align-items: center; padding: 0 26px; box-sizing: border-box; color: #fff; font-size: 36px; }
+#dpad .a { opacity: .6; } #dpad.l .l, #dpad.r .r { opacity: 1; transform: scale(1.25); }
+.tb { position: absolute; border: none; background: url(../assets/ui/btn_round.webp) center / 100% 100% no-repeat; color: #fff; font-weight: 800;
+  font-family: Georgia, serif; border-radius: 50%; font-size: 22px; touch-action: none; outline: none; text-shadow: 0 1px 0 #b23a78, 0 0 4px rgba(120,20,70,.6); filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); padding: 0; }
+.tb.down { filter: brightness(1.25) drop-shadow(0 1px 2px rgba(0,0,0,.35)); transform: scale(.94); }
+#bJump.big { right: max(28px, env(safe-area-inset-right)); bottom: max(28px, env(safe-area-inset-bottom)); width: 130px; height: 130px; font-size: 24px; }
+#bUp { right: max(180px, env(safe-area-inset-right)); bottom: 96px; width: 78px; height: 78px; }
+#bDown { right: max(180px, env(safe-area-inset-right)); bottom: 12px; width: 78px; height: 78px; }
+#bPause.small { right: 16px; top: 12px; width: 60px; height: 60px; font-size: 16px; }
+
+#bMute { position: fixed; right: 82px; top: 12px; width: 60px; height: 60px; font-size: 22px; z-index: 6; }
+#bNew { position: fixed; right: 148px; top: 12px; width: 60px; height: 60px; font-size: 24px; z-index: 6; }
+
+/* upozornění na gamepad / otočení */
+#toast { position: fixed; left: 50%; top: 84px; transform: translate(-50%, -20px); opacity: 0; transition: .3s; z-index: 7; pointer-events: none;
+  background: rgba(40,20,50,.82); color: #fff; font: 600 18px Georgia, serif; padding: 10px 22px; border-radius: 22px; border: 2px solid rgba(255,214,120,.8); }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+#rotate { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 20; background: #0b1020; color: #fff; text-align: center; font: 600 22px Georgia, serif; }
+#rotate .ph { font-size: 64px; display: inline-block; animation: rot 2.2s ease-in-out infinite; }
+@keyframes rot { 0%, 20% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+@media (orientation: portrait) { #rotate { display: flex; } }
+
+/* menší displeje (iPhone na šířku): menší ovládací prvky, aby nezakrývaly hru */
+@media (max-height: 500px) {
+  #dpad { width: 190px; height: 86px; border-radius: 43px; left: max(14px, env(safe-area-inset-left)); bottom: max(14px, env(safe-area-inset-bottom)); font-size: 28px; padding: 0 20px; }
+  #bJump.big { width: 96px; height: 96px; font-size: 19px; right: max(16px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); }
+  #bUp, #bDown { width: 58px; height: 58px; font-size: 18px; right: max(126px, env(safe-area-inset-right)); }
+  #bUp { bottom: 74px; } #bDown { bottom: 10px; }
+  #bPause.small, #bMute { width: 46px; height: 46px; top: 8px; font-size: 16px; }
+  #bNew { width: 46px; height: 46px; top: 8px; font-size: 18px; right: max(114px, env(safe-area-inset-right)); }
+  #bPause.small { right: max(10px, env(safe-area-inset-right)); } #bMute { right: max(62px, env(safe-area-inset-right)); }
+  #toast { top: 60px; font-size: 15px; }
+}
+
+/* karty s jedním nebo dvěma tlačítky */
+.card .btns { position: absolute; left: 50%; bottom: -36px; transform: translateX(-50%); display: flex; gap: 14px; white-space: nowrap; }
+.card .btns .play { position: relative; left: auto; bottom: auto; transform: none; width: 270px; height: 90px; animation: none; flex: none; }
+.card .btns .play.main { animation: pulse2 1.6s ease-in-out infinite; }
+.card .btns.two .play { width: 222px; height: 74px; }
+.card .btns.two .play span { font-size: 20px; letter-spacing: .5px; }
+@keyframes pulse2 { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+.card .play[data-act] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.card.gen { padding-bottom: 56px; }
+.card.gen .spin { font-size: 40px; display: inline-block; animation: spin 1.4s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-height: 500px) { .card .btns.two .play { width: 170px; height: 57px; } .card .btns.two .play span { font-size: 15px; } .card .btns .play { width: 210px; height: 70px; } }
