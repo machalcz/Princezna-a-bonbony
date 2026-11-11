@@ -79,7 +79,7 @@
     this.coyote = Math.max(0, this.coyote - dt);
 
     /* ---------- žebřík ---------- */
-    if (!this.climbing && (inp.y !== 0)) {
+    if (!this.climbing && inp.y !== 0 && !(this.mount > 0)) {
       const l = this.findLadder(inp.y < 0, inp.y > 0);
       if (l) { this.climbing = l; this.vx = 0; this.vy = 0; this.carry = 0; this.onGround = false; this.ground = null; this.jumping = false; }
     }
@@ -140,7 +140,7 @@
     const canJump = this.onGround || this.coyote > 0;
     if (this.jumpBuf > 0 && canJump) {
       const stick = this.ground && this.ground.type === 'sticky';
-      this.jump(stick ? C.STICKY_H : C.JUMP_H * (this.mount > 0 ? 1.3 : 1));
+      this.jump(stick ? C.STICKY_H : C.JUMP_H * (this.mount > 0 ? 1.75 : 1));
       this.jumpV = Math.abs(this.vy);
       this.stickyAir = !!stick;
     }

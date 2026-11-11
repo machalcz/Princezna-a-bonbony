@@ -9,7 +9,7 @@
   const OFF = { ice: 16, sticky: 16, wood: 11, stone: 18, grass: 26, tramp: 20, belt: 16 };
   const FILES = ['princess', 'p_back', 'p_blink', 'dragon_0', 'dragon_1', 'dragon_2'];
   const NW = 6, NC = 4;                              // počet snímků chůze a lezení
-  const WEBP = ['scorch_0', 'scorch_1', 'scorch_2', 'uni_stand', 'uni_0', 'uni_1', 'uni_2', 'uni_3', 'uni_4', 'uni_5', 'ghost', 'ghost_blink', 'trunks', 'p_ice_0', 'p_ice_1', 'p_ice_2', 'p_ice_3', 'p_ice_4', 'p_ice_5', 'p_bal_0', 'p_bal_1', 'p_bal_2', 'p_bal_3', 'p_bal_4', 'p_bal_5', 'walker_0', 'walker_1', 'walker_2', 'walker_3', 'walker_4', 'walker_5', 'walker_6', 'walker_7',
+  const WEBP = ['rider', 'scorch_0', 'scorch_1', 'scorch_2', 'uni_stand', 'uni_0', 'uni_1', 'uni_2', 'uni_3', 'uni_4', 'uni_5', 'ghost', 'ghost_blink', 'trunks', 'p_ice_0', 'p_ice_1', 'p_ice_2', 'p_ice_3', 'p_ice_4', 'p_ice_5', 'p_bal_0', 'p_bal_1', 'p_bal_2', 'p_bal_3', 'p_bal_4', 'p_bal_5', 'walker_0', 'walker_1', 'walker_2', 'walker_3', 'walker_4', 'walker_5', 'walker_6', 'walker_7',
     'hopper_0', 'hopper_1', 'hopper_2', 'hopper_3', 'hopper_4', 'hopper_5',
     'puffer_0', 'puffer_1', 'puffer_2', 'puffer_3', 'puffer_4', 'puffer_5', 'puffer_6', 'puffer_7', 'gnd_tile', 'fulcrum', 'fulcrum_top', 'fulcrum_base', 'post', 'portal',
     'ui/heart_full', 'ui/heart_empty', 'ui/panel_wide', 'ui/panel_small', 'ui/star_full', 'ui/star_empty', 'ui/btn_play', 'ui/btn_round', 'ui/crown', 'ui/ribbon',
@@ -579,6 +579,7 @@
 
   function drawPrincess(ctx, pl, t) {
     if (!ok(IMG.princess)) return;
+    if (pl.mount > 0) return;                                          // na jednorožci ji kreslí drawMount (sedí v sedle)
     if (pl.invuln > 0 && !(pl.mount > 0) && Math.floor(pl.invuln * 14) % 2) return;
     const g = pl.ground, gt = pl.onGround && g ? g.type : null;
     const inX = pl.inX || 0, vxT = pl.vx + (pl.carry || 0), spd = Math.abs(vxT);
@@ -668,7 +669,18 @@
     const warn = pl.mount < 2.2 && Math.floor(pl.mount * 7) % 2;
     ctx.save(); ctx.translate(pl.x, pl.y + 4 - bob); if (dir < 0) ctx.scale(-1, 1);
     if (pl.onGround) { ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(0, bob, w * 0.30, 6, 0, 0, 7); ctx.fill(); }
-    ctx.globalAlpha = warn ? 0.45 : 1; ctx.drawImage(im, -w * 0.52, -h * (idx < 0 ? 1.0 : 0.97), w, h); ctx.restore();
+    ctx.globalAlpha = warn ? 0.45 : 1; ctx.drawImage(im, -w * 0.52, -h * (idx < 0 ? 1.0 : 0.97), w, h);
+    // princezna sedí v sedle na hřbetě: kreslí se až po jednorožci, sukně jí splývá přes jeho záda; pohupuje se v rytmu cvalu
+    const rd = IMG.rider;
+    if (ok(rd)) {
+      const rh = 70, rw = rh * rd.width / rd.height;
+      const ph = pl.mountPh * 3.2, sway = idx < 0 ? Math.sin(t * 2.2) * 0.012 : (air ? (pl.vy < -80 ? -0.07 : 0.06) : Math.sin(ph) * 0.045);
+      const lift = idx < 0 ? 0 : (air ? 0 : -Math.abs(Math.sin(ph)) * 3.2), bl = air && pl.vy < -80 ? 1.04 : 1;
+      ctx.save(); ctx.translate(-w * 0.04, -h * 0.47 + 7 + lift); ctx.rotate(sway); ctx.scale(bl, bl);
+      if (warn) ctx.globalAlpha = 0.45;
+      ctx.drawImage(rd, -rw * 0.5, -rh, rw, rh); ctx.restore();
+    }
+    ctx.restore();
     if (!front && !(idx < 0 && false)) {
       for (let q = 0; q < 3; q++) { const k = ((t * 1.7 + q * 0.33) % 1); sparkle(ctx, pl.x - dir * (20 + k * 46), pl.y - 22 - k * 16 - q * 4, 1.8 + (1 - k) * 2.6, (1 - k) * 0.9); }
     }

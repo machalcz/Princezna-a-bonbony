@@ -130,7 +130,7 @@
       return;
     }
     if (c.magic === 'unicorn') {
-      pl.mount = pl.mountMax = 11; pl.cloak = 0; pl.mountPh = 0;
+      pl.mount = pl.mountMax = 11; pl.cloak = 0; pl.mountPh = 0; if (pl.climbing) { pl.climbing = null; pl.onGround = false; pl.vy = 0; }   // z žebříku se spadne dolů, na jednorožci se nelze držet
       E.burst(L, pl.x, pl.y - 40, 'rainbow');
       if (G.Audio) { G.Audio.magic(); setTimeout(() => G.Audio && G.Audio.neigh(), 220); }
     } else if (c.magic === 'ghost') {
